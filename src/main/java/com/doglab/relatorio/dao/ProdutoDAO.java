@@ -1,5 +1,7 @@
 package com.doglab.relatorio.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.doglab.relatorio.orm.Produto;
@@ -33,6 +35,11 @@ public class ProdutoDAO {
 	public Iterable<Produto> listAll()
 	{
 		return repo.findAll();
+	}
+	
+	public List<Produto> listOutOfStock()
+	{
+		return repo.findByAmountEquals(0);
 	}
 	
 	public Integer countColumns()

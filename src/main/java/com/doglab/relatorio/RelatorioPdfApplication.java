@@ -9,11 +9,11 @@ import com.doglab.relatorio.pdf.PDFGenerator;
 @SpringBootApplication
 public class RelatorioPdfApplication implements CommandLineRunner {
 
-	private final PDFGenerator generator;
+	private final PDFGenerator GENERATOR;
 	
 	public RelatorioPdfApplication(PDFGenerator generator)
 	{
-		this.generator = generator;
+		this.GENERATOR = generator;
 	}
 	
 	public static void main(String[] args) {
@@ -22,7 +22,7 @@ public class RelatorioPdfApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		generator.Generate("funcionarios", "Mercadinho Leite");
+		GENERATOR.Generate("funcionarios", "Mercadinho Leite");
 	}
 
 }

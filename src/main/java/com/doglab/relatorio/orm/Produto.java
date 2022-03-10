@@ -23,6 +23,7 @@ public class Produto {
 	private String name;
 	private String description;
 	private BigDecimal value;
+	private Integer amount;
 	
 	public Produto(String name, BigDecimal value)
 	{

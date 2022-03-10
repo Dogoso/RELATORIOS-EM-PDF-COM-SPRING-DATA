@@ -30,7 +30,7 @@ public class PDFGenerator {
 	public PDFGenerator(ProdutoDAO produtoDao)
 	{
 		this.PRODUTODAO = produtoDao;
-		COLUMNS_AMOUNT = produtoDao.countColumns();
+		this.COLUMNS_AMOUNT = produtoDao.countColumns();
 	}
 	
 	public void Generate(String path, String text) 
@@ -42,22 +42,15 @@ public class PDFGenerator {
 		
 		document.open();
 
-		Font font = new Font();
-		font.setSize(30);
-		font.setStyle(Font.BOLD);
-		font.setColor(BaseColor.BLACK);
-		
-		Paragraph title = new Paragraph(text, font);
-		title.setAlignment(Paragraph.ALIGN_CENTER);
-		
-		PRODUTODAO.listAll().forEach(produtos::add);
+		PRODUTODAO.listOutOfStock().forEach(produtos::add);
 		PdfPTable table = new PdfPTable(COLUMNS_AMOUNT);
-	    table.setSpacingBefore(50);
+	    table.setSpacingBefore(20);
 		
 		try {
 			addTableHeader(table);
 			addRows(table);
-			document.add(title);
+			document.add(getTitle(text));
+			document.add(getWarning("Produtos fora de estoque"));
 			document.add(table);
 		} catch (DocumentException e) {
 			e.printStackTrace();
@@ -66,10 +59,34 @@ public class PDFGenerator {
 		document.close();
 	}
 
+	private Paragraph getTitle(String text)
+	{
+		Font font = new Font();
+		font.setSize(30);
+		font.setStyle(Font.BOLD);
+		font.setColor(BaseColor.BLACK);
+		
+		Paragraph title = new Paragraph(text, font);
+		title.setAlignment(Paragraph.ALIGN_CENTER);
+		
+		return title;
+	}
+	
+	private Paragraph getWarning(String text)
+	{
+		Font font = new Font();
+		font.setColor(BaseColor.RED);
+		
+		Paragraph warn = new Paragraph("("+text+")", font);
+		warn.setAlignment(Paragraph.ALIGN_CENTER);
+		
+		return warn;
+	}
+	
 	private void addTableHeader(PdfPTable table) {
 		Font font = new Font();
 		font.setColor(BaseColor.WHITE);
-	    Stream.of("ID", "Descrição", "Nome", "Preço")
+	    Stream.of("ID", "Nome", "Descrição", "Preço", "Quantidade")
 	      .forEach(columnTitle -> {
 	        PdfPCell header = new PdfPCell();
 	        header.setBackgroundColor(BaseColor.BLUE);
@@ -86,6 +103,7 @@ public class PDFGenerator {
 	    	table.addCell(product.getDescription());
 	    	table.addCell(product.getName());
 	    	table.addCell(product.getValue().toString());
+	    	table.addCell(product.getAmount().toString());
 	    });
 	}
 	
